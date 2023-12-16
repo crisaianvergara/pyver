@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="inherited_res_company_view_form" model="ir.ui.view">
+        <field name="name">inherited.rest.company.view.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <field name="street" position="attributes">
+                <attribute name="placeholder">Zone</attribute>
+                <attribute name="required">True</attribute>
+            </field>
+            <xpath expr="//field[@name='street']" position="after">
+                <field name="barangay" placeholder="Barangay" />
+            </xpath>
+            <field name="street2" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </field>
+            <xpath expr="//field[@name='barangay']" position="after">
+                <field name="province" placeholder="Province" />
+            </xpath>
+            <field name="city" position="attributes">
+                <attribute name="placeholder">City/Municipality</attribute>
+                <attribute name="required">True</attribute>
+            </field>
+            <field name="state_id" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </field>
+            <field name="zip" position="attributes">
+                <attribute name="required">True</attribute>
+            </field>
+            <field name="country_id" position="attributes">
+                <attribute name="required">True</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>
