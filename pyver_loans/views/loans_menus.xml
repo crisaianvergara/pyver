@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Menu Root -->
+    <menuitem id="loans_menu_root" name="Loans" sequence="-100"/>
+
+    <!-- Actions Menu -->
+    <menuitem id="loans_action_menu" name="Loans"
+            parent="loans_menu_root" sequence="-100" />
+    
+    <menuitem id="configuration_action_menu" name="Configuration"
+            parent="loans_menu_root" sequence="-99" />
+</odoo>

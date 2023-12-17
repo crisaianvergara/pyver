@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Tree -->
+    <record id="loan_type_view_tree" model="ir.ui.view">
+        <field name="name">loan.type.view.tree</field>
+        <field name="model">loan.type</field>
+        <field name="arch" type="xml">
+            <tree string="Loan Types" editable="bottom">
+                <field name="name" />
+                <field name="code" readonly="1" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Loan Plan Action -->
+    <record id="loan_type_action" model="ir.actions.act_window">
+        <field name="name">Loan Type</field>
+        <field name="res_model">loan.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Loan Plan Menu Action -->
+    <menuitem id="loan_plan_menu_action" name="Loan Type"
+        parent="configuration_action_menu"
+        action="loan_type_action" />
+</odoo>

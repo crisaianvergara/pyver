@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Loan Request Tree View -->
+    <record id="loan_request_view_tree" model="ir.ui.view">
+        <field name="name">loan.request.view.tree</field>
+        <field name="model">loan.request</field>
+        <field name="arch" type="xml">
+            <tree string="Loan Request">
+                <field name="name" readonly="1" />
+                <field name="partner_id" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Loan Request Form View -->
+    <record id="loan_request_view_form" model="ir.ui.view">
+        <field name="name">loan.request.view.form</field>
+        <field name="model">loan.request</field>
+        <field name="arch" type="xml">
+            <form string="Loan Request">
+                <field name="partner_id" />
+            </form>
+        </field>
+    </record>
+
+    <!-- Loan Request Action -->
+    <record id="loan_request_action" model="ir.actions.act_window">
+        <field name="name">Loan Request</field>
+        <field name="res_model">loan.request</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Loan Request Menu Action -->
+    <menuitem id="loan_request_menu_action" name="Loan Requests"
+        parent="loans_action_menu"
+        action="loan_request_action" />
+</odoo>
