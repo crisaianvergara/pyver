@@ -7,14 +7,9 @@ class LoanType(models.Model):
     _description = "Loan Type"
     _order = 'name'
 
-    # SQL Constraints
-    _sql_constraints = [
-        ("check_unique_name", "UNIQUE(name)", "The Type must be unique."),
-    ]
 
-    # Fields
-    name = fields.Char("Name", required=True)
     code = fields.Char('Code', required=True, index='trigram', copy=False, default='New')
+    name = fields.Char("Name", required=True)
 
 
     # Python Constraints
@@ -24,6 +19,12 @@ class LoanType(models.Model):
         for rec in self:
             if len(rec.name) < 3:
                 raise ValidationError("Type must be greater than 3 characters.")
+            
+            same_name_records = self.env['loan.type'].search(
+                [('name', '=ilike', rec.name), ('id', '!=', rec.id)]
+            )
+            if same_name_records:
+                raise ValidationError("The loan type must be unique.")
     
 
     @api.model

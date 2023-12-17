@@ -16,6 +16,8 @@ def get_amount_due(rec):
 class LoanRequest(models.Model):
     _name = "loan.request"
     _description = "Loan Request"
+    _order = 'name'
+    _rec_name = "partner_id"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char('Number', required=True, index='trigram', copy=False, default='New')
