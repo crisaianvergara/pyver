@@ -1,6 +1,11 @@
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+
+import logging
+
+_logger = logging.getLogger(__name__)
 
 LOAN_AMOUNT_MIN = 5000
 LOAN_AMOUNT_MAX = 50000
@@ -16,11 +21,11 @@ def get_amount_due(rec):
 class LoanRequest(models.Model):
     _name = "loan.request"
     _description = "Loan Request"
-    _order = 'name'
+    _order = "name"
     _rec_name = "partner_id"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char('Number', required=True, index='trigram', copy=False, default='New')
+    name = fields.Char("Number", required=True, index="trigram", copy=False, default="New")
     partner_id = fields.Many2one("res.partner", string="Partner", required=True)
     loan_amount = fields.Float("Amount", required=True, default=LOAN_AMOUNT_MIN)
     loan_type_id = fields.Many2one("loan.type", string="Loan Type", required=True)
@@ -28,6 +33,7 @@ class LoanRequest(models.Model):
     amount_due = fields.Float("Amount Due", compute="_compute_amount_due")
     applied_date = fields.Date("Applied Date")
     approved_date = fields.Date("Approved Date")
+    recurring_next_date = fields.Date("Date of Next Invoice", compute="_compute_recurring_next_date", store=True)
     state = fields.Selection(
         string="Status",
         copy=False,
@@ -51,7 +57,7 @@ class LoanRequest(models.Model):
     @api.model
     def create(self, vals):
         """Sequence for Loan Number."""
-        vals['name'] = self.env['ir.sequence'].next_by_code('loan.request')
+        vals["name"] = self.env["ir.sequence"].next_by_code("loan.request")
         return super(LoanRequest, self).create(vals)
     
 
@@ -63,6 +69,16 @@ class LoanRequest(models.Model):
                 rec.amount_due = get_amount_due(rec)
             else: 
                 rec.amount_due = 0
+    
+
+    @api.depends("approved_date")
+    def _compute_recurring_next_date(self):
+        """Compute recurring next date."""
+        for rec in self:
+            if rec.approved_date:
+                rec.recurring_next_date = rec.approved_date + relativedelta(months=1)
+            else:
+                rec.recurring_next_date = None
 
 
     @api.depends("partner_id")
@@ -127,3 +143,40 @@ class LoanRequest(models.Model):
         if "approved" in self.mapped("state"):
             raise ValidationError("Approved borrows cannot be cancel.")
         return self.write({"state": "canceled"})
+    
+
+    def action_generate_invoice(self):
+        """Generate invoice."""
+        _logger.info("Start: Generating Invoices")
+
+        product = self.get_product()
+
+        for rec in self:
+            data = {
+                "partner_id": rec.partner_id.id,
+                "invoice_date_due": rec.recurring_next_date,
+                "move_type": "out_invoice",
+            }
+
+            new_invoice = self.env["account.move"].create(data)
+            _logger.info(f"Invoice {new_invoice.id} generated successfully.")
+
+            if product:
+                invoice_line_data = {
+                    "move_id": new_invoice.id,
+                    "product_id": product.id,
+                    "price_unit": rec.amount_due,
+                }
+
+                new_invoice_line = self.env["account.move.line"].create(invoice_line_data)
+                _logger.info(f"Invoice Line {new_invoice_line.id} created for Invoice {new_invoice.id}.")
+            
+            update_recurring_next_date = rec.recurring_next_date + relativedelta(months=1)
+            rec.write({"recurring_next_date": update_recurring_next_date})
+    
+
+    def get_product(self):
+        product = self.env["product.template"].search([
+            ("name", "=", "Loan")
+        ], limit=1)
+        return product

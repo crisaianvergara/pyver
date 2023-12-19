@@ -34,6 +34,9 @@
                     <button name="action_cancel" string="Cancel"
                             type="object" class="btn-danger"
                             invisible="state not in ['applied']"/>
+                    <button name="action_generate_invoice" string="Generate Invoice"
+                            type="object" class="btn-primary"
+                            invisible="state not in ['approved']"/>
                     <field name="state" widget="statusbar" 
                         statusbar_visible="draft,applied,approved,fully_paid,canceled" />
                 </header>
@@ -52,8 +55,11 @@
                                 options="{'no_create': True, 'no_edit': True}" />
                             <field name="interest_rate" />
                             <field name="amount_due" />
+                        </group>
+                        <group>
                             <field name="applied_date" readonly="1" />
                             <field name="approved_date" readonly="1" />
+                            <field name="recurring_next_date" readonly="1" />
                         </group>
                     </group>
                 </sheet>
