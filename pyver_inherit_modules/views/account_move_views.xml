@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <record id="inherited_account_move_view_form" model="ir.ui.view">
+        <field name="name">inherited.account.move.view.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <field name="invoice_payment_term_id" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </field>
+            <xpath expr="//span[@class='o_form_label mx-3 oe_edit_only' and text()=' or ']" position="attributes">
+                <attribute name="invisible">True</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

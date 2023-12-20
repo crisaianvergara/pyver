@@ -147,11 +147,12 @@ class LoanRequest(models.Model):
 
     def action_generate_invoice(self):
         """Generate invoice."""
-        _logger.info("Start: Generating Invoices")
+        _logger.info("---------- Generating Invoices ----------")
 
         product = self.get_product()
 
         for rec in self:
+            _logger.info(f"---------- Create Invoice ----------")
             data = {
                 "partner_id": rec.partner_id.id,
                 "invoice_date_due": rec.recurring_next_date,
@@ -159,24 +160,42 @@ class LoanRequest(models.Model):
             }
 
             new_invoice = self.env["account.move"].create(data)
-            _logger.info(f"Invoice {new_invoice.id} generated successfully.")
+            _logger.info(f"---------- Invoice {new_invoice.id} generated successfully. ----------")
 
-            if product:
-                invoice_line_data = {
-                    "move_id": new_invoice.id,
-                    "product_id": product.id,
-                    "price_unit": rec.amount_due,
-                }
+            _logger.info(f"---------- Create Invoice Lines ----------")
+            invoice_line_data = {
+                "move_id": new_invoice.id,
+                "product_id": product.id,
+                "price_unit": rec.amount_due,
+            }
 
-                new_invoice_line = self.env["account.move.line"].create(invoice_line_data)
-                _logger.info(f"Invoice Line {new_invoice_line.id} created for Invoice {new_invoice.id}.")
+            new_invoice_line = self.env["account.move.line"].create(invoice_line_data)
+            _logger.info(f"---------- Invoice Line {new_invoice_line.id} created for Invoice {new_invoice.id}. ----------")
             
+            _logger.info(f"---------- Update Date of Next Invoice ----------")
             update_recurring_next_date = rec.recurring_next_date + relativedelta(months=1)
             rec.write({"recurring_next_date": update_recurring_next_date})
     
 
     def get_product(self):
+        _logger.info("---------- Search Product ----------")
         product = self.env["product.template"].search([
-            ("name", "=", "Loan")
+            ("name", "=", "Loan Interest")
         ], limit=1)
+        _logger.info(f"---------- Product: {product}. ----------")
+
+        if not product:
+            _logger.info(f"---------- Create Product ----------")
+            data = {
+                "name": "Loan Interest",
+                "list_price": 0.00,
+                "taxes_id": False,
+                "supplier_taxes_id": False,
+            }
+            product = self.env["product.template"].create(data)
+            _logger.info(f"---------- Product {product.id} created. ----------")
+            _logger.info(f"---------- Product INFO {product.id}. ----------")
+            return product
+        
+        _logger.info(f"---------- Product INFO {product.id}. ----------")
         return product
