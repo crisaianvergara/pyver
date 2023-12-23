@@ -52,8 +52,8 @@ class LoanRequest(models.Model):
         string="Related Loans",
         compute="_compute_related_loans"
     )
-    unpaid_interest_2023 = fields.Float("Unpaid Interest 2023", default=0.00)
     borrowed_date = fields.Date("Borrowed Date", default=lambda self: fields.Datetime.now())
+    loan_request_ids = fields.One2many("other.charge", "other_charge_id", string="Other Charges")
 
 
     @api.model

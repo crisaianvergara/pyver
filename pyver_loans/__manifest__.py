@@ -6,7 +6,7 @@
     "website": "https://www.crisaianvergara.com",
     "category": "Localization",
     "version": "17.0.1.0.0",
-    "depends": ["base", "mail", "account", "pyver_inherit_modules"],
+    "depends": ["base", "mail", "account",],
     "data": [
         "security/ir.model.access.csv",
 
