@@ -7,7 +7,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
-LOAN_AMOUNT_MIN = 5000
+LOAN_AMOUNT_MIN = 1000
 LOAN_AMOUNT_MAX = 50000
 LOAN_INTEREST_MIN = 5
 
