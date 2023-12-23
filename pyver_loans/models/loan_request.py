@@ -33,7 +33,7 @@ class LoanRequest(models.Model):
     amount_due = fields.Float("Amount Due", compute="_compute_amount_due")
     applied_date = fields.Date("Applied Date")
     approved_date = fields.Date("Approved Date")
-    recurring_next_date = fields.Date("Date of Next Invoice", compute="_compute_recurring_next_date", store=True)
+    date_of_next_invoice = fields.Date("Date of Next Invoice", compute="_compute_date_of_next_invoice", store=True)
     state = fields.Selection(
         string="Status",
         copy=False,
@@ -52,6 +52,8 @@ class LoanRequest(models.Model):
         string="Related Loans",
         compute="_compute_related_loans"
     )
+    unpaid_interest_2023 = fields.Float("Unpaid Interest 2023", default=0.00)
+    borrowed_date = fields.Date("Borrowed Date", default=lambda self: fields.Datetime.now())
 
 
     @api.model
@@ -72,13 +74,13 @@ class LoanRequest(models.Model):
     
 
     @api.depends("approved_date")
-    def _compute_recurring_next_date(self):
-        """Compute recurring next date."""
+    def _compute_date_of_next_invoice(self):
+        """Compute date of next invoice."""
         for rec in self:
             if rec.approved_date:
-                rec.recurring_next_date = rec.approved_date + relativedelta(months=1)
+                rec.date_of_next_invoice = rec.approved_date + relativedelta(months=1)
             else:
-                rec.recurring_next_date = None
+                rec.date_of_next_invoice = None
 
 
     @api.depends("partner_id")
@@ -155,7 +157,7 @@ class LoanRequest(models.Model):
             _logger.info(f"---------- Create Invoice ----------")
             data = {
                 "partner_id": rec.partner_id.id,
-                "invoice_date_due": rec.recurring_next_date,
+                "invoice_date_due": rec.date_of_next_invoice,
                 "move_type": "out_invoice",
             }
 
@@ -173,8 +175,8 @@ class LoanRequest(models.Model):
             _logger.info(f"---------- Invoice Line {new_invoice_line.id} created for Invoice {new_invoice.id}. ----------")
             
             _logger.info(f"---------- Update Date of Next Invoice ----------")
-            update_recurring_next_date = rec.recurring_next_date + relativedelta(months=1)
-            rec.write({"recurring_next_date": update_recurring_next_date})
+            update_date_of_next_invoice = rec.date_of_next_invoice + relativedelta(months=1)
+            rec.write({"date_of_next_invoice": update_date_of_next_invoice})
     
 
     def get_product(self):
