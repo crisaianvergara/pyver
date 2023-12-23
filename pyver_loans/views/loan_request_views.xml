@@ -27,16 +27,16 @@
                 <header>
                     <button name="action_apply" string="Apply"
                             type="object" class="btn-primary"
-                            invisible="state not in ['draft']"/>
+                            invisible="state not in ['draft']" />
                     <button name="action_approve" string="Approve"
                             type="object" class="btn-primary"
-                            invisible="state not in ['applied']"/>
+                            invisible="state not in ['applied']" />
                     <button name="action_cancel" string="Cancel"
                             type="object" class="btn-danger"
-                            invisible="state not in ['applied']"/>
+                            invisible="state not in ['applied']" />
                     <button name="action_generate_invoice" string="Generate Invoice"
                             type="object" class="btn-primary"
-                            invisible="state not in ['approved']"/>
+                            invisible="state not in ['approved']" />
                     <field name="state" widget="statusbar" 
                         statusbar_visible="draft,applied,approved,fully_paid,canceled" />
                 </header>
