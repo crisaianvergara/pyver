@@ -8,14 +8,12 @@
     "version": "17.0.1.0.0",
     "depends": ["base", "account", "pyver_loans",],
     "data": [
-        "security/ir.model.access.csv",
-        
         "views/account_move_views.xml",
     ],
     "demo": [],
     "assets": {},
     "sequence": -99,
-    "application": False,
+    "application": True,
     "installable": True,
     "license": "LGPL-3"
 }

@@ -14,8 +14,8 @@
     ],
     "demo": [],
     "assets": {},
-    "sequence": -99,
-    "application": False,
+    "sequence": -98,
+    "application": True,
     "installable": True,
     "license": "LGPL-3"
 }

@@ -12,17 +12,10 @@
             </xpath>
             <xpath expr="//page[@name='other_info']" position="before">
                 <page name="statement_line" string="Statement Lines" invisible="move_type not in ['out_invoice', 'in_invoice']">
-                    <field name="statement_line_ids" readonly="1">
-                        <tree>
-                            <field name="name" />
-                            <field name="state" />
-                            <field name="amount" />
-                        </tree>
-                    </field>
-                    <group class="oe_subtotal_footer">
-                        <field name="total_previous_charges" string="Total Previous Charges"/>
-                        <field name="amount_total" string="Current Charges"/>
-                        <field name="total_statement_balance" class="oe_subtotal_footer_separator"/>
+                    <group>
+                        <field name="total_previous_charges" string="Previous Charges" />
+                        <field name="amount_total" string="Current Charges" />
+                        <field name="total_statement_balance" />
                     </group>
                 </page>
             </xpath>
