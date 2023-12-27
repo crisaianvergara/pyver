@@ -147,6 +147,11 @@ class LoanRequest(models.Model):
         return self.write({"state": "canceled"})
     
 
+    def action_reset_to_draft(self):
+        """Reset loan request to draft state."""
+        self.write({"state": "draft"})
+        return {}
+
     def action_generate_invoice(self):
         """Generate invoice."""
         _logger.info("---------- Generating Invoices ----------")

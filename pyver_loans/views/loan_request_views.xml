@@ -37,6 +37,9 @@
                     <button name="action_generate_invoice" string="Generate Invoice"
                             type="object" class="btn-primary"
                             invisible="state not in ['approved']" />
+                    <button name="action_reset_to_draft" string="Reset to Draft"
+                            type="object" class="btn-primary"
+                            invisible="state in ['draft']" />
                     <field name="state" widget="statusbar" 
                         statusbar_visible="draft,applied,approved,fully_paid,canceled" />
                 </header>
