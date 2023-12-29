@@ -14,6 +14,8 @@
                 <field name="interest_rate" />
                 <field name="amount_due" />
                 <field name="state" />
+                <field name="borrowed_date" />
+                <field name="date_of_next_invoice" />
             </tree>
         </field>
     </record>
