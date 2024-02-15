@@ -151,37 +151,40 @@ class LoanRequest(models.Model):
         """Reset loan request to draft state."""
         self.write({"state": "draft"})
         return {}
-
+    
     def action_generate_invoice(self):
+        for rec in self:
+            self.main_action_generate_invoice(rec)
+
+    def main_action_generate_invoice(self, rec):
         """Generate invoice."""
         _logger.info("---------- Generating Invoices ----------")
 
         product = self.get_product()
 
-        for rec in self:
-            _logger.info(f"---------- Create Invoice ----------")
-            data = {
-                "partner_id": rec.partner_id.id,
-                "invoice_date_due": rec.date_of_next_invoice,
-                "move_type": "out_invoice",
-            }
+        _logger.info(f"---------- Create Invoice ----------")
+        data = {
+            "partner_id": rec.partner_id.id,
+            "invoice_date_due": rec.date_of_next_invoice,
+            "move_type": "out_invoice",
+        }
 
-            new_invoice = self.env["account.move"].create(data)
-            _logger.info(f"---------- Invoice {new_invoice.id} generated successfully. ----------")
+        new_invoice = self.env["account.move"].create(data)
+        _logger.info(f"---------- Invoice {new_invoice.id} generated successfully. ----------")
 
-            _logger.info(f"---------- Create Invoice Lines ----------")
-            invoice_line_data = {
-                "move_id": new_invoice.id,
-                "product_id": product.id,
-                "price_unit": rec.amount_due,
-            }
+        _logger.info(f"---------- Create Invoice Lines ----------")
+        invoice_line_data = {
+            "move_id": new_invoice.id,
+            "product_id": product.id,
+            "price_unit": rec.amount_due,
+        }
 
-            new_invoice_line = self.env["account.move.line"].create(invoice_line_data)
-            _logger.info(f"---------- Invoice Line {new_invoice_line.id} created for Invoice {new_invoice.id}. ----------")
-            
-            _logger.info(f"---------- Update Date of Next Invoice ----------")
-            update_date_of_next_invoice = rec.date_of_next_invoice + relativedelta(months=1)
-            rec.write({"date_of_next_invoice": update_date_of_next_invoice})
+        new_invoice_line = self.env["account.move.line"].create(invoice_line_data)
+        _logger.info(f"---------- Invoice Line {new_invoice_line.id} created for Invoice {new_invoice.id}. ----------")
+        
+        _logger.info(f"---------- Update Date of Next Invoice ----------")
+        update_date_of_next_invoice = rec.date_of_next_invoice + relativedelta(months=1)
+        rec.write({"date_of_next_invoice": update_date_of_next_invoice})
     
 
     def get_product(self):
