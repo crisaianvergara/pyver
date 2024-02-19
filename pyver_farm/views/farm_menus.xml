@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+        <!-- Menu Root -->
+        <menuitem id="farm_menu_root" name="Farm" web_icon="pyver_farm, static/description/icon.png" sequence="-99" />
+
+        <!-- Actions Menu -->
+        <menuitem id="farm_action_menu" name="Farm" parent="farm_menu_root" sequence="-100" />
+        <menuitem id="configuration_action_menu" name="Configuration" parent="farm_menu_root" sequence="-99" />
+</odoo>

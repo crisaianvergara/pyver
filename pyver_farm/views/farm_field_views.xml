@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Loan Request Tree View -->
+    <record id="farm_field_view_tree" model="ir.ui.view">
+        <field name="name">farm.field.view.tree</field>
+        <field name="model">farm.field</field>
+        <field name="arch" type="xml">
+            <tree string="Farm Field" editable="bottom">
+                <field name="name" />
+                <field name="area" />
+                <field name="location" />
+                <field name="farm_type_id" />
+                <field name="remarks" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Loan Request Action -->
+    <record id="farm_field_action" model="ir.actions.act_window">
+        <field name="name">Farm Field</field>
+        <field name="res_model">farm.field</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Loan Request Menu Action -->
+    <menuitem id="farm_field_menu_action" name="Farm Field"
+        parent="configuration_action_menu"
+        action="farm_field_action" />
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_farm_field,access.farm.field,pyver_farm.model_farm_field,base.group_user,1,1,1,1
+access_farm_type,access.farm.type,pyver_farm.model_farm_type,base.group_user,1,1,1,1
