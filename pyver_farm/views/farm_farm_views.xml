@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Farm Farm Tree View -->
+    <record id="farm_farm_view_tree" model="ir.ui.view">
+        <field name="name">farm.farm.view.tree</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <tree string="Farms">
+                <field name="name" />
+                <field name="farm_field_id" />
+                <field name="farm_crop_id" />
+                <field name="date" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Farm Farm Form View -->
+    <record id="farm_farm_view_form" model="ir.ui.view">
+        <field name="name">farm.farm.view.form</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <form string="Farms">
+              <sheet>
+                <h1>
+                  <field name="name" placeholder="Name" />
+                </h1>
+                <br />
+                <group>
+                  <group>
+                    <field name="farm_field_id" />
+                    <field name="farm_crop_id" />
+                    <field name="date" />
+                  </group>
+                  <group>
+                  </group>
+                </group>
+                <notebook>
+                  <page string="Track Expenses">
+                  </page>
+                  <page string="Task Management">
+                  </page>
+                  <page string="Other Information">
+                  </page>
+                </notebook>
+              </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Farm Farm Kanban View -->
+    <record id="farm_farm_view_kanban" model="ir.ui.view">
+        <field name="name">farm.farm.view.kanban</field>
+        <field name="model">farm.farm</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" sample="1">
+                <field name="name" />
+                <templates>
+                  <t t-name="kanban-box">
+                    <div t-attf-class="oe_kanban_global_click">
+                      <div class="oe_kanban_details">
+                        <ul>
+                          <li>Field: <field name="farm_field_id" /></li>
+                          <li>Crop: <field name="farm_crop_id" /></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Farm Farm Action -->
+    <record id="farm_farm_action" model="ir.actions.act_window">
+        <field name="name">Farms</field>
+        <field name="res_model">farm.farm</field>
+        <field name="view_mode">kanban,form,tree</field>
+    </record>
+
+    <!-- Farm Farm Menu Action -->
+    <menuitem id="farm_farm_menu_action" name="Farms"
+        parent="farm_action_menu"
+        action="farm_farm_action" />
+</odoo>

@@ -11,8 +11,16 @@
       "security/ir.model.access.csv",
 
       "views/farm_menus.xml",
+
+      # Farm
+      "views/farm_farm_views.xml",
+      # Configuration
+      "views/farm_crop_views.xml",
       "views/farm_field_views.xml",
+      "views/farm_location_views.xml",
+      "views/farm_task_views.xml",
       "views/farm_type_views.xml",
+      "views/farm_uom_views.xml",
     ],
     "demo": [],
     "assets": {},

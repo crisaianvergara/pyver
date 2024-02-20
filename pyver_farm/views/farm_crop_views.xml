@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Farm Crop Tree View -->
+    <record id="farm_crop_view_tree" model="ir.ui.view">
+        <field name="name">farm.crop.view.tree</field>
+        <field name="model">farm.crop</field>
+        <field name="arch" type="xml">
+            <tree string="Crops" editable="bottom">
+                <field name="name" />
+                <field name="description" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Farm Crop Action -->
+    <record id="farm_crop_action" model="ir.actions.act_window">
+        <field name="name">Crops</field>
+        <field name="res_model">farm.crop</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <!-- Farm Crop Menu Action -->
+    <menuitem id="farm_crop_menu_action" name="Crops"
+        parent="configuration_action_menu"
+        action="farm_crop_action" />
+</odoo>

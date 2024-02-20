@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<odoo>
+    <!-- Farm Uom Tree View -->
+    <record id="farm_uom_view_tree" model="ir.ui.view">
+        <field name="name">farm.uom.view.tree</field>
+        <field name="model">farm.uom</field>
+        <field name="arch" type="xml">
+            <tree string="Units of Measure" editable="bottom">
+                <field name="name" />
+                <field name="description" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Farm Uom Action -->
+    <record id="farm_uom_action" model="ir.actions.act_window">
+        <field name="name">Units of Measure</field>
+        <field name="res_model">farm.uom</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <!-- Farm Uom Menu Action -->
+    <menuitem id="farm_uom_menu_action" name="Units of Measure"
+        parent="configuration_action_menu"
+        action="farm_uom_action" />
+</odoo>
