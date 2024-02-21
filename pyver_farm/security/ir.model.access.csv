@@ -1,8 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_farm_farm,access.farm.farm,pyver_farm.model_farm_farm,base.group_user,1,1,1,1
-access_farm_crop,access.farm.crop,pyver_farm.model_farm_crop,base.group_user,1,1,1,1
-access_farm_field,access.farm.field,pyver_farm.model_farm_field,base.group_user,1,1,1,1
-access_farm_location,access.farm.location,pyver_farm.model_farm_location,base.group_user,1,1,1,1
-access_farm_task,access.farm.task,pyver_farm.model_farm_task,base.group_user,1,1,1,1
-access_farm_type,access.farm.type,pyver_farm.model_farm_type,base.group_user,1,1,1,1
-access_farm_uom,access.farm.uom,pyver_farm.model_farm_uom,base.group_user,1,1,1,1
+access_farm_farm,access.farm.farm,pyver_farm.model_farm_farm,pyver_farm.group_farm_administrator,1,1,1,1
+access_farm_crop,access.farm.crop,pyver_farm.model_farm_crop,pyver_farm.group_farm_administrator,1,1,1,1
+access_farm_field,access.farm.field,pyver_farm.model_farm_field,pyver_farm.group_farm_administrator,1,1,1,1
+access_farm_location,access.farm.location,pyver_farm.model_farm_location,pyver_farm.group_farm_administrator,1,1,1,1
+access_farm_task,access.farm.task,pyver_farm.model_farm_task,pyver_farm.group_farm_administrator,1,1,1,1
+access_farm_type,access.farm.type,pyver_farm.model_farm_type,pyver_farm.group_farm_administrator,1,1,1,1
+access_farm_uom,access.farm.uom,pyver_farm.model_farm_uom,pyver_farm.group_farm_administrator,1,1,1,1
