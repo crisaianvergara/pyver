@@ -8,8 +8,8 @@
     "version": "17.0.1.0.0",
     "depends": ["base", "mail", "account",],
     "data": [
-        "security/ir.model.access.csv",
         "security/security.xml",
+        "security/ir.model.access.csv",
 
         "data/loans_data.xml",
 

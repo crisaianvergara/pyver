@@ -2,7 +2,7 @@
 
 <odoo>
   <!-- Category -->
-  <record model="ir.module.category" id="module_category_loan">
+  <record model="ir.module.category" id="module_category_loans">
     <field name="name">Loan Management</field>
     <field name="description">Category for Loan</field>
     <field name="sequence">7</field>
@@ -11,6 +11,6 @@
   <!-- Administrator Group -->
   <record id="group_loan_administrator" model="res.groups">
     <field name="name">Administrator</field>
-    <field name="category_id" ref="module_category_loan" />
+    <field name="category_id" ref="module_category_loans" />
   </record>
 </odoo>
