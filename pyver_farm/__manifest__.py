@@ -4,10 +4,11 @@
     "description": """Farm""",
     "author": "Cris-aian Vergara",
     "website": "https://www.crisaianvergara.com",
-    "category": "Localization",
+    "category": "Farm",
     "version": "17.0.1.0.0",
     "depends": ["base"],
     "data": [
+      "security/security.xml",
       "security/ir.model.access.csv",
 
       "views/farm_menus.xml",

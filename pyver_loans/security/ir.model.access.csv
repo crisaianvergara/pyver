@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_loan_request,access.loan.request,pyver_loans.model_loan_request,base.group_user,1,1,1,1
-access_loan_type,access.loan.type,pyver_loans.model_loan_type,base.group_user,1,1,1,1
-access_other_charge,access.other_charge,pyver_loans.model_other_charge,base.group_user,1,1,1,1
+access_loan_request,access.loan.request,pyver_loans.model_loan_request,pyver_loans.group_loan_administrator,1,1,1,1
+access_loan_type,access.loan.type,pyver_loans.model_loan_type,pyver_loans.group_loan_administrator,1,1,1,1
+access_other_charge,access.other_charge,pyver_loans.model_other_charge,pyver_loans.group_loan_administrator,1,1,1,1
