@@ -7,9 +7,9 @@
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="type">ir.actions.server</field>
-        <field name="active">False</field>
+        <field name="active">True</field>
         <field name="numbercall">-1</field>
-        <field name="nextcall" eval="datetime.now().strftime('%Y-%m-%d 00:00:00')"/>
+        <field name="nextcall" eval="datetime.now().strftime('%Y-%m-%d 06:55:00')"/>
         <field name="state">code</field>
         <field name="code">
 model._auto_generate_invoices()

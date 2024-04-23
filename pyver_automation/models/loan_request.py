@@ -19,6 +19,7 @@ class LoanRequest(models.Model):
 
     domain = [
       ("date_of_next_invoice", "=", result_format),
+      ("state", "=", "approved"),
     ]
 
     records = self.search(domain, limit=limit)

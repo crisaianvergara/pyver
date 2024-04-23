@@ -8,7 +8,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 LOAN_AMOUNT_MIN = 1000
-LOAN_AMOUNT_MAX = 50000
+LOAN_AMOUNT_MAX = 100000
 LOAN_INTEREST_MIN = 5
 
 
@@ -33,6 +33,7 @@ class LoanRequest(models.Model):
     amount_due = fields.Float("Amount Due", compute="_compute_amount_due")
     applied_date = fields.Date("Applied Date")
     approved_date = fields.Date("Approved Date")
+    fully_paid_date = fields.Date("Fully Paid Date")
     date_of_next_invoice = fields.Date("Date of Next Invoice", compute="_compute_date_of_next_invoice", store=True)
     state = fields.Selection(
         string="Status",
@@ -115,8 +116,11 @@ class LoanRequest(models.Model):
     def _validate_loan_amount(self):
         """Validate loan amount: must be between LOAN_AMOUNT_MIN and LOAN_AMOUNT_MAX loan."""
         for rec in self:
-            if not LOAN_AMOUNT_MIN <= rec.loan_amount <= LOAN_AMOUNT_MAX:
-                raise ValidationError(f"Amount must be in between {LOAN_AMOUNT_MIN} to {LOAN_AMOUNT_MAX}.")
+            _logger.info('function: _validate_loan_amount')
+            _logger.info(f'Record State: {rec.state}')
+            if rec.state != "fully_paid":
+                if not LOAN_AMOUNT_MIN <= rec.loan_amount <= LOAN_AMOUNT_MAX:
+                    raise ValidationError(f"Amount must be in between {LOAN_AMOUNT_MIN} to {LOAN_AMOUNT_MAX}.")
             
             
     def action_apply(self):
@@ -135,6 +139,17 @@ class LoanRequest(models.Model):
         vals = {
             "state": "approved",
             "approved_date": datetime.now(),
+        }
+        for rec in self:
+            rec.write(vals)
+
+
+    def action_fully_paid(self):
+        """Fully paid borrow/loan application."""
+        vals = {
+            "state": "fully_paid",
+            "fully_paid_date": datetime.now(),
+            "loan_amount": 0.00,
         }
         for rec in self:
             rec.write(vals)
