@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="auto_create_invoices" model="ir.cron">
-        <field name="name">Loans: Auto Generate Invoices</field>
-        <field name="model_id" ref="model_loan_request"></field>
+    <record id="auto_create_contacts" model="ir.cron">
+        <field name="name">Contacts: Auto Update Contacts</field>
+        <field name="model_id" ref="model_res_partner"></field>
         <field name="user_id" ref="base.user_root"/>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="type">ir.actions.server</field>
-        <field name="active">True</field>
+        <field name="active">False</field>
         <field name="numbercall">-1</field>
         <field name="nextcall" eval="datetime.now().strftime('%Y-%m-%d 06:55:00')"/>
         <field name="state">code</field>
         <field name="code">
-model._auto_generate_invoices()
+model._auto_update_contacts()
         </field>
     </record>
 </odoo>

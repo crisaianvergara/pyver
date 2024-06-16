@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="automation_res_partner_view_form" model="ir.ui.view">
+        <field name="name">automation.res.partner.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="minimum_amount_to_be_paid" />
+                <field name="matbp_last_updated" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
