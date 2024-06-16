@@ -8,7 +8,7 @@
     "version": "17.0.1.0.0",
     "depends": ["base", "pyver_loans"],
     "data": [
-      "data/auto_generate_invoices.xml",
+      "data/main.xml",
     ],
     "demo": [],
     "assets": {},
