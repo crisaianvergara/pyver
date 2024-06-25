@@ -73,6 +73,9 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Invoicing" invisible="state not in ['approved']">
+                            <field name="borrower_invoice_ids" />
+                        </page>
                         <page string="Other Charges">
                             <field name="loan_request_ids">
                                 <tree editable="bottom">
