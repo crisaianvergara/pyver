@@ -55,15 +55,18 @@ class LoanRequest(models.Model):
     )
     borrowed_date = fields.Date("Borrowed Date", default=lambda self: fields.Datetime.now())
     loan_request_ids = fields.One2many("other.charge", "other_charge_id", string="Other Charges")
-
-
+    borrower_invoice_ids = fields.One2many(
+        "account.move", "partner_id",
+        compute="_compute_borrower_invoice_ids",
+        string="Borrower Invoices"
+    )
+    
     @api.model
     def create(self, vals):
         """Sequence for Loan Number."""
         vals["name"] = self.env["ir.sequence"].next_by_code("loan.request")
         return super(LoanRequest, self).create(vals)
     
-
     @api.depends("loan_amount", "interest_rate")
     def _compute_amount_due(self):
         """Compute amount due."""
@@ -73,7 +76,6 @@ class LoanRequest(models.Model):
             else: 
                 rec.amount_due = 0
     
-
     @api.depends("approved_date")
     def _compute_date_of_next_invoice(self):
         """Compute date of next invoice."""
@@ -82,7 +84,6 @@ class LoanRequest(models.Model):
                 rec.date_of_next_invoice = rec.approved_date + relativedelta(months=1)
             else:
                 rec.date_of_next_invoice = None
-
 
     @api.depends("partner_id")
     def _compute_related_loans(self):
@@ -99,7 +100,22 @@ class LoanRequest(models.Model):
                 ]
             )
             rec.related_loan_ids = related_loans
-                
+
+    @api.depends("partner_id")
+    def _compute_borrower_invoice_ids(self):
+        """"
+        Fetch the invoices related to the borrower.
+        """
+        for rec in self:
+            rec.borrower_invoice_ids = self.env["account.move"].search(
+                [
+                    ("partner_id", "=", rec.partner_id.id),
+                    ("move_type", "=", "out_invoice"),
+                    ("state", "=", "posted"),
+                    ("payment_state", "in", ["not_paid", "partial"]),
+                    ("invoice_date_due", "<", fields.Date.today())
+                ]
+            )
 
     @api.constrains("state")
     def _validate_related_loans(self):
@@ -111,7 +127,6 @@ class LoanRequest(models.Model):
             if rec.related_loan_ids and rec.state not in ["canceled"]:
                 raise ValidationError("The borrower already has an active loan.")
             
-
     @api.constrains("loan_amount")
     def _validate_loan_amount(self):
         """Validate loan amount: must be between LOAN_AMOUNT_MIN and LOAN_AMOUNT_MAX loan."""
@@ -121,8 +136,7 @@ class LoanRequest(models.Model):
             if rec.state != "fully_paid":
                 if not LOAN_AMOUNT_MIN <= rec.loan_amount <= LOAN_AMOUNT_MAX:
                     raise ValidationError(f"Amount must be in between {LOAN_AMOUNT_MIN} to {LOAN_AMOUNT_MAX}.")
-            
-            
+                
     def action_apply(self):
         """Apply loan application."""
         vals = {
@@ -132,7 +146,6 @@ class LoanRequest(models.Model):
         if "canceled" in self.mapped("state"):
             raise ValidationError("Canceled loans cannot be submit.")
         return self.write(vals)
-    
 
     def action_approve(self):
         """Approved borrow/loan application."""
@@ -142,7 +155,6 @@ class LoanRequest(models.Model):
         }
         for rec in self:
             rec.write(vals)
-
 
     def action_fully_paid(self):
         """Fully paid borrow/loan application."""
@@ -154,13 +166,11 @@ class LoanRequest(models.Model):
         for rec in self:
             rec.write(vals)
 
-    
     def action_cancel(self):
         """Cancel borrow/loan application."""
         if "approved" in self.mapped("state"):
             raise ValidationError("Approved borrows cannot be cancel.")
         return self.write({"state": "canceled"})
-    
 
     def action_reset_to_draft(self):
         """Reset loan request to draft state."""
@@ -200,7 +210,6 @@ class LoanRequest(models.Model):
         _logger.info(f"---------- Update Date of Next Invoice ----------")
         update_date_of_next_invoice = rec.date_of_next_invoice + relativedelta(months=1)
         rec.write({"date_of_next_invoice": update_date_of_next_invoice})
-    
 
     def get_product(self):
         _logger.info("---------- Search Product ----------")
