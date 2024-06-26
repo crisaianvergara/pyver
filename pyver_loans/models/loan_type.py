@@ -5,12 +5,10 @@ from odoo.exceptions import ValidationError
 class LoanType(models.Model):
     _name = "loan.type"
     _description = "Loan Type"
-    _order = 'name'
-
+    _order = 'code'
 
     code = fields.Char('Code', required=True, index='trigram', copy=False, default='New')
     name = fields.Char("Name", required=True)
-
 
     # Python Constraints
     @api.constrains("name")
@@ -20,13 +18,12 @@ class LoanType(models.Model):
             if len(rec.name) < 3:
                 raise ValidationError("Type must be greater than 3 characters.")
             
-            same_name_records = self.env['loan.type'].search(
+            same_name_records = self.search(
                 [('name', '=ilike', rec.name), ('id', '!=', rec.id)]
             )
             if same_name_records:
-                raise ValidationError("The loan type must be unique.")
+                raise ValidationError(f"The loan type '{rec.name}' already exists.")
     
-
     @api.model
     def create(self, vals):
         """Sequence for Code."""

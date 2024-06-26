@@ -55,10 +55,8 @@
                     <br />
                     <group>
                         <group>
-                            <field name="loan_amount" 
-                                options="{'no_create': True, 'no_edit': True}" />
-                            <field name="loan_type_id" 
-                                options="{'no_create': True, 'no_edit': True}" />
+                            <field name="loan_amount" />
+                            <field name="loan_type_id" />
                             <field name="interest_rate" />
                             <field name="amount_due" />
                             <field name="fully_paid_date" />
