@@ -26,14 +26,14 @@ class LoanRequest(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     name = fields.Char("Number", required=True, index="trigram", copy=False, default="New")
-    partner_id = fields.Many2one("res.partner", string="Partner", required=True)
-    loan_amount = fields.Float("Amount", required=True, default=LOAN_AMOUNT_MIN)
-    loan_type_id = fields.Many2one("loan.type", string="Loan Type", required=True)
-    interest_rate = fields.Float("Interest Rate (%)", required=True, default=LOAN_INTEREST_MIN)
+    partner_id = fields.Many2one("res.partner", string="Partner", required=True, tracking=True)
+    loan_amount = fields.Float("Amount", required=True, default=LOAN_AMOUNT_MIN, tracking=True)
+    loan_type_id = fields.Many2one("loan.type", string="Loan Type", required=True, tracking=True)
+    interest_rate = fields.Float("Interest Rate (%)", required=True, default=LOAN_INTEREST_MIN, tracking=True)
     amount_due = fields.Float("Amount Due", compute="_compute_amount_due")
     applied_date = fields.Date("Applied Date")
     approved_date = fields.Date("Approved Date")
-    fully_paid_date = fields.Date("Fully Paid Date")
+    fully_paid_date = fields.Date("Fully Paid Date", tracking=True)
     date_of_next_invoice = fields.Date("Date of Next Invoice", compute="_compute_date_of_next_invoice", store=True)
     state = fields.Selection(
         string="Status",
@@ -47,13 +47,14 @@ class LoanRequest(models.Model):
             ("fully_paid", "Fully Paid"),
             ("canceled", "Canceled"),
         ],
+        tracking=True,
     )
     related_loan_ids = fields.One2many(
         "loan.request", "partner_id",
         string="Related Loans",
         compute="_compute_related_loans"
     )
-    borrowed_date = fields.Date("Borrowed Date", default=lambda self: fields.Datetime.now())
+    borrowed_date = fields.Date("Borrowed Date", default=lambda self: fields.Datetime.now(), tracking=True)
     loan_request_ids = fields.One2many("other.charge", "other_charge_id", string="Other Charges")
     borrower_invoice_ids = fields.One2many(
         "account.move", "partner_id",
@@ -210,6 +211,7 @@ class LoanRequest(models.Model):
         _logger.info(f"---------- Update Date of Next Invoice ----------")
         update_date_of_next_invoice = rec.date_of_next_invoice + relativedelta(months=1)
         rec.write({"date_of_next_invoice": update_date_of_next_invoice})
+        rec.message_post(body="Invoice has been generated successfully.")
 
     def get_product(self):
         _logger.info("---------- Search Product ----------")
