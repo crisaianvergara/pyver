@@ -118,6 +118,24 @@ class LoanRequest(models.Model):
                 ]
             )
 
+    @api.constrains("fully_paid_date")
+    def _validate_fully_paid_date(self):
+        """
+        Check if the fully paid date in the past. 
+        """
+        for record in self:
+            if record.fully_paid_date and record.fully_paid_date > fields.Date.today():
+                raise ValidationError("Fully paid date must be today or in the past.")
+    
+    @api.constrains("borrowed_date")
+    def _validate_borrowed_date(self):
+        """
+        Check if the borrowed date in the past. 
+        """
+        for record in self:
+            if record.borrowed_date and record.borrowed_date > fields.Date.today():
+                raise ValidationError("Borrowed date must be today or in the past.")
+
     @api.constrains("state")
     def _validate_related_loans(self):
         """
