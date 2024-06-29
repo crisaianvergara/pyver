@@ -1,21 +1,12 @@
+import logging
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
-
-import logging
+from .utils import _get_amount_due, _get_config_value
 
 _logger = logging.getLogger(__name__)
-
-LOAN_AMOUNT_MIN = 1000
-LOAN_AMOUNT_MAX = 100000
-LOAN_INTEREST_MIN = 5
-
-
-def get_amount_due(rec):
-    """Calculate the amount due/monthly amount to pay."""
-    interest_value = rec.loan_amount * (rec.interest_rate  / 100)
-    return interest_value
 
 
 class LoanRequest(models.Model):
@@ -27,9 +18,9 @@ class LoanRequest(models.Model):
 
     name = fields.Char("Number", required=True, index="trigram", copy=False, default="New")
     partner_id = fields.Many2one("res.partner", string="Partner", required=True, tracking=True)
-    loan_amount = fields.Float("Amount", required=True, default=LOAN_AMOUNT_MIN, tracking=True)
+    loan_amount = fields.Float("Amount", required=True, default=lambda self: self._default_loan_min(), tracking=True)
     loan_type_id = fields.Many2one("loan.type", string="Loan Type", required=True, tracking=True)
-    interest_rate = fields.Float("Interest Rate (%)", required=True, default=LOAN_INTEREST_MIN, tracking=True)
+    interest_rate = fields.Float("Interest Rate (%)", required=True, default=lambda self: self._default_loan_interest(), tracking=True)
     amount_due = fields.Float("Amount Due", compute="_compute_amount_due")
     applied_date = fields.Date("Applied Date")
     approved_date = fields.Date("Approved Date")
@@ -73,7 +64,7 @@ class LoanRequest(models.Model):
         """Compute amount due."""
         for rec in self:
             if rec.loan_amount > 0 and rec.interest_rate > 0:
-                rec.amount_due = get_amount_due(rec)
+                rec.amount_due = _get_amount_due(rec)
             else: 
                 rec.amount_due = 0
     
@@ -118,10 +109,17 @@ class LoanRequest(models.Model):
                 ]
             )
 
+    @api.constrains("interest_rate")
+    def _validate_interest_rate_field(self):
+        """Validate the interest rate field."""
+        for record in self:
+            if record.interest_rate < 0:
+                raise ValidationError("Interest rate must not be negative.")
+            
     @api.constrains("fully_paid_date")
     def _validate_fully_paid_date(self):
         """
-        Check if the fully paid date in the past. 
+        Check if the fully paid date in the past or current day. 
         """
         for record in self:
             if record.fully_paid_date and record.fully_paid_date > fields.Date.today():
@@ -130,7 +128,7 @@ class LoanRequest(models.Model):
     @api.constrains("borrowed_date")
     def _validate_borrowed_date(self):
         """
-        Check if the borrowed date in the past. 
+        Check if the borrowed date in the past or current day. 
         """
         for record in self:
             if record.borrowed_date and record.borrowed_date > fields.Date.today():
@@ -148,13 +146,13 @@ class LoanRequest(models.Model):
             
     @api.constrains("loan_amount")
     def _validate_loan_amount(self):
-        """Validate loan amount: must be between LOAN_AMOUNT_MIN and LOAN_AMOUNT_MAX loan."""
+        """Validate loan amount: must be between minimum and maximum loan."""
         for rec in self:
-            _logger.info('function: _validate_loan_amount')
-            _logger.info(f'Record State: {rec.state}')
             if rec.state != "fully_paid":
-                if not LOAN_AMOUNT_MIN <= rec.loan_amount <= LOAN_AMOUNT_MAX:
-                    raise ValidationError(f"Amount must be in between {LOAN_AMOUNT_MIN} to {LOAN_AMOUNT_MAX}.")
+                loan_min = _get_config_value(self, 'pyver_loans.loan_min')
+                loan_max = _get_config_value(self, 'pyver_loans.loan_max')
+                if not loan_min <= rec.loan_amount <= loan_max:
+                    raise ValidationError(f"Amount must be in between {loan_min:,.2f} to {loan_max:,.2f}.")
                 
     def action_apply(self):
         """Apply loan application."""
@@ -199,6 +197,14 @@ class LoanRequest(models.Model):
     def action_generate_invoice(self):
         for rec in self:
             self.main_action_generate_invoice(rec)
+
+    def _default_loan_min(self):
+        """Get the the default loan amount."""
+        return _get_config_value(self, 'pyver_loans.loan_min')
+    
+    def _default_loan_interest(self):
+        """Get the the default loan interest."""
+        return _get_config_value(self, 'pyver_loans.loan_interest')
 
     def main_action_generate_invoice(self, rec):
         """Generate invoice."""
