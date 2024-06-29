@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Loans Config Settings Form -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.pyver.loans</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="100"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Loans" string="Loans" name="pyver_loans">
+                    <block title="Loan Management" id="loans_default_management">
+                        <setting string="Default Loan Amount and Interest" help="Set the loan minimum amount, loan maximum amount and the monthly interest rate.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label class="col-lg-5" string="Minimum Amount" for="loan_min"/>
+                                    <field name="loan_min"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label class="col-lg-5" string="Maximum Amount" for="loan_max"/>
+                                    <field name="loan_max"/>
+                                </div>
+                                <div class="row mt8">
+                                    <label class="col-lg-5" string="Interest Rate (%)" for="loan_interest"/>
+                                    <field name="loan_interest"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Loan Config Settings Action -->
+    <record id="loans_config_settings_action" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'pyver_loans', 'bin_size': False}</field>
+    </record>
+
+    <!-- Loan Config Settings Menu Action -->
+    <menuitem id="loans_config_settings_menu_action" name="Settings"
+        parent="configuration_action_menu"
+        sequence="0"
+        action="loans_config_settings_action"
+        groups="base.group_system" />
+</odoo>
