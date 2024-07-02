@@ -81,6 +81,9 @@
                                 </tree>
                             </field>
                         </page>
+                        <page string="Notes">
+                            <field name="notes" placeholder="Enter your notes..." />
+                        </page>
                     </notebook>
                 </sheet>
                 <div class="oe_chatter">
