@@ -52,6 +52,7 @@ class LoanRequest(models.Model):
         compute="_compute_borrower_invoice_ids",
         string="Borrower Invoices"
     )
+    notes = fields.Html(string="Notes")
     
     @api.model
     def create(self, vals):

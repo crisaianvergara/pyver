@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <template id="report_loan_request">
+    <t t-call="web.html_container">
+      <t t-call="web.external_layout">
+        <div class="page">
+          <div class="container">
+            <t t-foreach="docs" t-as="o">
+              <h1 class="text-uppercase py-0 my-0"><span t-field="o.partner_id" /></h1>
+              <p class="text-uppercase py-0 my-0"><span t-field="o.partner_id.street" />, <span t-field="o.partner_id.barangay" /></p>
+              <p class="text-uppercase pt-0 mt-0">
+                <span t-field="o.partner_id.city" />,
+                <span t-field="o.partner_id.province" />,
+                <span t-field="o.partner_id.country_id.code" />
+                <span t-field="o.partner_id.zip" />
+              </p>
+              <h4 class="text-uppercase">Details</h4>
+              <p class="fw-bold pb-2 mb-0">Amount: <span t-field="o.loan_amount" t-options='{"widget": "float", "precision": 2}' /></p>
+              <p class="fw-bold pb-2 mb-0">Type: <span t-field="o.loan_type_id" /></p>
+              <p class="fw-bold pb-2 mb-0">Interest Rate (%): <span t-field="o.interest_rate" t-options='{"widget": "float", "precision": 2}' /></p>
+              <p class="fw-bold pb-2">Monthly Due: <span t-field="o.amount_due" t-options='{"widget": "float", "precision": 2}' /></p>
+              <t t-if="o.borrower_invoice_ids">
+              <h4 class="text-uppercase">Outstanding Invoices</h4>
+                <table class="table table-striped my-3">
+                  <thead>
+                    <tr>
+                      <th class="text-start">Number</th>
+                      <th class="text-start">Due Date</th>
+                      <th class="text-start">Amount Due</th>
+                      <th class="text-start">Payment</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <t t-foreach="o.borrower_invoice_ids" t-as="invoice">
+                      <tr>
+                        <td><span t-field="invoice.name" /></td>
+                        <td><span t-field="invoice.invoice_date_due" /></td>
+                        <td><span t-field="invoice.amount_residual" /></td>
+                        <td><span t-field="invoice.payment_state" /></td>
+                      </tr>
+                    </t>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th colspan="2" class="text-start">Total Outstanding Invoices:
+                        <span t-esc="sum(invoice.amount_residual for invoice in o.borrower_invoice_ids)" t-options='{"widget": "float", "precision": 2}' /></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </t>
+              <t t-if="o.loan_request_ids and any([charge.state == 'unpaid' for charge in o.loan_request_ids])">
+                <h4 class="text-uppercase">Other Charges</h4>
+                <table class="table table-striped my-3">
+                  <thead>
+                    <tr>
+                      <th class="text-start">Description</th>
+                      <th class="text-start">Amount</th>
+                      <th class="text-start">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <t t-foreach="o.loan_request_ids" t-as="other_charge">
+                      <t t-if="other_charge.state == 'unpaid'">
+                        <tr>
+                          <td>
+                            <span t-field="other_charge.name" />
+                          </td>
+                          <td>
+                            <span t-field="other_charge.amount" t-options='{"widget": "float", "precision": 2}' />
+                            <span t-field="o.partner_id.currency_id.symbol" />
+                          </td>
+                          <td>
+                            <span t-field="other_charge.state" />
+                          </td>
+                        </tr>
+                      </t>
+                    </t>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th class="text-start">Total Other Charges:
+                        <span t-esc="sum(charge.amount for charge in o.loan_request_ids if charge.state == 'unpaid')" t-options='{"widget": "float", "precision": 2}' /></th>
+                      <th></th>
+                      <th></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </t>
+              <div class="row my-4">
+                <t t-set="total_outstanding_invoices" t-value="sum(invoice.amount_residual for invoice in o.borrower_invoice_ids)" />
+                <t t-set="total_other_charges" t-value="sum(charge.amount for charge in o.loan_request_ids if charge.state == 'unpaid')" />
+                <t t-set="total_amount_due" t-value="total_outstanding_invoices + total_other_charges" />
+                <t t-if="total_outstanding_invoices or total_other_charges">
+                  <h5 class="text-uppercase text-light"><span class="bg-secondary p-3 rounded-pill">
+                    Total Amount Due:
+                    <span t-esc="total_amount_due" t-options='{"widget": "float", "precision": 2}' /></span>
+                  </h5>
+                </t>
+              </div>
+            </t>
+          </div>
+        </div>
+      </t>
+    </t>
+  </template>
+</odoo>
+
+
+<!-- number, due date,  -->

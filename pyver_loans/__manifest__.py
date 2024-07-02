@@ -17,6 +17,9 @@
         "views/loan_request_views.xml",
         "views/loan_type_views.xml",
         "views/res_config_settings_views.xml",
+        
+        'report/loan_request_templates.xml',
+        'report/loan_request_reports.xml',
     ],
     "demo": [],
     "assets": {},
