@@ -21,9 +21,7 @@ class LoanRequest(models.Model):
 
     date_today = datetime.today()
     result = date_today + relativedelta(months=1)
-
     result_format = result.strftime('%m/%d/%Y')
-
     domain = [
       ("date_of_next_invoice", "=", result_format),
       ("state", "=", "approved"),
@@ -32,10 +30,37 @@ class LoanRequest(models.Model):
 
     while True:
       records = self.search(domain, limit=limit, offset=offset)
-      
       if not records:
         break
-      
       self.with_delay(max_retries=3, description="Loans: Auto Generate Invoices")._main_auto_generate_invoices(records)
+      offset += limit
+  
+  def _main_auto_send_outstanding_balance_report(self, records):
+    _logger.info('---------- function: _main_auto_send_outstanding_balance_report ----------')
+
+    loan_requests = self.search([])
+    
+    for record in records:
+      for loan_request in loan_requests:
+        if loan_request.partner_id.id == record.partner_id.id:
+          template_id = self.env.ref("pyver_loans.email_template_outstanding_balance_report").id
+          self.env['mail.template'].browse(template_id).send_mail(loan_request.id, force_send=True)
+
+  def _auto_send_outstanding_balance_report(self, limit=100):
+    _logger.info('---------- function: _auto_send_outstanding_balance_report ----------')
+
+    domain = [
+      ("move_type", "=", "out_invoice"),
+      ("state", "<=", "posted"),
+      ("invoice_date_due", "=", datetime.today()),
+      ("payment_state", "in", ["not_paid", "partial"]),
+    ]
+    offset = 0
+
+    while True:
+      records = self.env["account.move"].search(domain, limit=limit, offset=offset)
+      if not records:
+        break
+      self.with_delay(max_retries=3, description="Loans: Auto Send Outstanding Balance Report")._main_auto_send_outstanding_balance_report(records)
       offset += limit
       

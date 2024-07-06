@@ -12,6 +12,7 @@
         "security/ir.model.access.csv",
 
         "data/loans_data.xml",
+        "data/mail_template_data.xml",
 
         "views/loans_menus.xml",
         "views/loan_request_views.xml",

@@ -11,10 +11,10 @@ class OtherCharge(models.Model):
     state = fields.Selection(
         string="Status",
         copy=False,
-        default="unpaid",
+        default="not_paid",
         required=True,
         selection=[
-            ("unpaid", "Unpaid"),
             ("paid", "Paid"),
+            ("not_paid", "Not Paid"),
         ],
     )
