@@ -15,8 +15,6 @@
 model._auto_generate_invoices()
         </field>
     </record>
-
-
     <record id="auto_post_invoices" model="ir.cron">
         <field name="name">Invoicing: Auto Post Invoices</field>
         <field name="model_id" ref="model_account_move"></field>
@@ -30,6 +28,21 @@ model._auto_generate_invoices()
         <field name="state">code</field>
         <field name="code">
 model._auto_post_invoices()
+        </field>
+    </record>
+        <record id="auto_send_outstanding_balance_report" model="ir.cron">
+        <field name="name">Loans: Auto Send Outstanding Balance Report</field>
+        <field name="model_id" ref="model_loan_request"></field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="type">ir.actions.server</field>
+        <field name="active">True</field>
+        <field name="numbercall">-1</field>
+        <field name="nextcall" eval="datetime.now().strftime('%Y-%m-%d 06:55:00')"/>
+        <field name="state">code</field>
+        <field name="code">
+model._auto_send_outstanding_balance_report()
         </field>
     </record>
 </odoo>

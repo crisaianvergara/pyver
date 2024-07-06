@@ -24,13 +24,11 @@ class AccountMove(models.Model):
       ("create_date", "<=", datetime.today()),
     ]
     offset = 0
-
+    
     while True:
       records = self.search(domain, limit=limit, offset=offset)
-
       if not records:
         break
-
       self.with_delay(max_retries=3, description="Invoicing: Auto Post Invoices")._main_auto_post_invoice(records)
       offset += limit
         

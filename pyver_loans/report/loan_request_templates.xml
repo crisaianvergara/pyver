@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <template id="report_loan_request">
-    <t t-call="web.html_container">
+  <data>
+    <template id="report_loan_request_document">
       <t t-call="web.external_layout">
+      <t t-set="o" t-value="o.with_context(lang=lang)" />
         <div class="page">
           <div class="container">
             <t t-foreach="docs" t-as="o">
@@ -42,15 +43,13 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="2" class="text-start">Total Outstanding Invoices:
-                        <span t-esc="sum(invoice.amount_residual for invoice in o.borrower_invoice_ids)" t-options='{"widget": "float", "precision": 2}' /></th>
-                      <th></th>
-                      <th></th>
+                      <th colspan="4" class="text-start">Total Outstanding Invoices:
+                        <span t-out="sum(invoice.amount_residual for invoice in o.borrower_invoice_ids)" t-options='{"widget": "float", "precision": 2}' /></th>
                     </tr>
                   </tfoot>
                 </table>
               </t>
-              <t t-if="o.loan_request_ids and any([charge.state == 'unpaid' for charge in o.loan_request_ids])">
+              <t t-if="o.loan_request_ids and any([charge.state == 'not_paid' for charge in o.loan_request_ids])">
                 <h4 class="text-uppercase">Other Charges</h4>
                 <table class="table table-striped my-3">
                   <thead>
@@ -62,7 +61,7 @@
                   </thead>
                   <tbody>
                     <t t-foreach="o.loan_request_ids" t-as="other_charge">
-                      <t t-if="other_charge.state == 'unpaid'">
+                      <t t-if="other_charge.state == 'not_paid'">
                         <tr>
                           <td>
                             <span t-field="other_charge.name" />
@@ -80,22 +79,20 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th class="text-start">Total Other Charges:
-                        <span t-esc="sum(charge.amount for charge in o.loan_request_ids if charge.state == 'unpaid')" t-options='{"widget": "float", "precision": 2}' /></th>
-                      <th></th>
-                      <th></th>
+                      <th colspan="3" class="text-start">Total Other Charges:
+                        <span t-out="sum(charge.amount for charge in o.loan_request_ids if charge.state == 'not_paid')" t-options='{"widget": "float", "precision": 2}' /></th>
                     </tr>
                   </tfoot>
                 </table>
               </t>
               <div class="row my-4">
                 <t t-set="total_outstanding_invoices" t-value="sum(invoice.amount_residual for invoice in o.borrower_invoice_ids)" />
-                <t t-set="total_other_charges" t-value="sum(charge.amount for charge in o.loan_request_ids if charge.state == 'unpaid')" />
+                <t t-set="total_other_charges" t-value="sum(charge.amount for charge in o.loan_request_ids if charge.state == 'not_paid')" />
                 <t t-set="total_amount_due" t-value="total_outstanding_invoices + total_other_charges" />
                 <t t-if="total_outstanding_invoices or total_other_charges">
                   <h5 class="text-uppercase text-light"><span class="bg-secondary p-3 rounded-pill">
                     Total Amount Due:
-                    <span t-esc="total_amount_due" t-options='{"widget": "float", "precision": 2}' /></span>
+                    <span t-out="total_amount_due" t-options='{"widget": "float", "precision": 2}' /></span>
                   </h5>
                 </t>
               </div>
@@ -103,9 +100,15 @@
           </div>
         </div>
       </t>
-    </t>
-  </template>
+    </template>
+
+    <template id="report_loan_request">
+      <t t-call="web.html_container">
+        <t t-foreach="docs" t-as="o">
+          <t t-set="lang" t-value="o.partner_id.lang"/>
+          <t t-call="pyver_loans.report_loan_request_document" t-lang="lang" />
+        </t>
+      </t>
+    </template>
+  </data>
 </odoo>
-
-
-<!-- number, due date,  -->

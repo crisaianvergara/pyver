@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <!-- Paper Format -->
-  <record id="paperformat_loan_request" model="report.paperformat">
-      <field name="name">Loan Request</field>
-      <field name="format">A4</field>
-      <field name="page_height">0</field>
-      <field name="page_width">0</field>
-      <field name="orientation">Portrait</field>
-      <field name="margin_top">40</field>
-      <field name="margin_bottom">32</field>
-      <field name="margin_left">7</field>
-      <field name="margin_right">7</field>
-      <field name="header_line" eval="False"/>
-      <field name="header_spacing">35</field>
-      <field name="dpi">90</field>
-  </record>
+  <data>
+    <!-- Paper Format -->
+    <record id="paperformat_loan_request" model="report.paperformat">
+        <field name="name">A4 - loan</field>
+        <field name="default" eval="True" />
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">20</field>
+        <field name="margin_bottom">32</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">15</field>
+        <field name="dpi">90</field>
+    </record>
 
-  <!-- Report Action -->
-  <record id="action_report_loan_request" model="ir.actions.report">
-      <field name="name">Loan Request</field>
-      <field name="model">loan.request</field>
-      <field name="report_type">qweb-html</field>
-      <field name="report_name">pyver_loans.report_loan_request</field>
-      <field name="report_file">pyver_loans.report_loan_request</field>
-      <field name="paperformat_id" ref="pyver_loans.paperformat_loan_request" />
-      <field name="binding_model_id" ref="pyver_loans.model_loan_request"/>
-      <field name="binding_type">report</field>
-  </record>
+    <!-- Report Action -->
+    <record id="action_report_loan_request" model="ir.actions.report">
+        <field name="name">Outstanding Balance Report</field>
+        <field name="model">loan.request</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pyver_loans.report_loan_request</field>
+        <field name="report_file">pyver_loans.report_loan_request</field>
+        <field name="print_report_name">"Outstanding Balance Report - %s" % (object.partner_id.name)</field>
+        <field name="attachment" />
+        <field name="paperformat_id" ref="pyver_loans.paperformat_loan_request" />
+        <field name="binding_model_id" ref="model_loan_request" />
+        <field name="binding_type">report</field>
+    </record>
+  </data>
 </odoo>
