@@ -15,7 +15,7 @@
                 <span t-field="o.partner_id.country_id.code" />
                 <span t-field="o.partner_id.zip" />
               </p>
-              <h4 class="text-uppercase">Details</h4>
+              <h4 class="text-uppercase">Loan Details</h4>
               <p class="fw-bold pb-2 mb-0">Amount: <span t-field="o.loan_amount" t-options='{"widget": "float", "precision": 2}' /></p>
               <p class="fw-bold pb-2 mb-0">Type: <span t-field="o.loan_type_id" /></p>
               <p class="fw-bold pb-2 mb-0">Interest Rate (%): <span t-field="o.interest_rate" t-options='{"widget": "float", "precision": 2}' /></p>
