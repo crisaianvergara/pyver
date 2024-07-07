@@ -22,6 +22,22 @@ class LoanRequest(models.Model):
     loan_type_id = fields.Many2one("loan.type", string="Loan Type", required=True, tracking=True)
     interest_rate = fields.Float("Interest Rate (%)", required=True, default=lambda self: self._default_loan_interest(), tracking=True)
     amount_due = fields.Float("Amount Due", compute="_compute_amount_due")
+    payment_structure = fields.Selection(
+        string="Payment Structure",
+        copy=False,
+        default="interest_only_loan",
+        required=True,
+        selection=[
+            ("amortized_loan", "Amortized Loan"),
+            ("interest_only_loan", "Interest-Only Loan"),
+            ("interest_free_loan", "Interest-Free Loan"),
+        ],
+        tracking=True,
+        help="Select the type of loan payment structure:\n"
+             "- Amortized Loan: Regular payments covering both principal and interest.\n"
+             "- Interest-Only Loan: Initial payments cover only the interest, with principal payments starting later.\n"
+             "- Interest-Free Loan: No interest charged, only repay the principal amount borrowed.",
+    )
     applied_date = fields.Date("Applied Date")
     approved_date = fields.Date("Approved Date")
     fully_paid_date = fields.Date("Fully Paid Date", tracking=True)

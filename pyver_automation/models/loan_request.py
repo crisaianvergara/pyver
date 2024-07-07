@@ -25,6 +25,7 @@ class LoanRequest(models.Model):
     domain = [
       ("date_of_next_invoice", "=", result_format),
       ("state", "=", "approved"),
+      ("payment_structure", "=", "interest_only_loan"),
     ]
     offset = 0
 
@@ -38,13 +39,20 @@ class LoanRequest(models.Model):
   def _main_auto_send_outstanding_balance_report(self, records):
     _logger.info('---------- function: _main_auto_send_outstanding_balance_report ----------')
 
-    loan_requests = self.search([])
+    domain = [
+      ("state", "=", "approved"),
+      ("payment_structure", "=", "interest_only_loan"),
+    ]
+    loan_requests = self.search(domain)
     
     for record in records:
       for loan_request in loan_requests:
         if loan_request.partner_id.id == record.partner_id.id:
-          template_id = self.env.ref("pyver_loans.email_template_outstanding_balance_report").id
-          self.env['mail.template'].browse(template_id).send_mail(loan_request.id, force_send=True)
+          try:
+            template_id = self.env.ref("pyver_loans.email_template_outstanding_balance_report").id
+            self.env['mail.template'].browse(template_id).send_mail(loan_request.id, force_send=True)
+          except Exception as e:
+            _logger.error(f"('---------- Failed to send email for {loan_request.partner_id.name} - Error: {str(e)} ----------')")
 
   def _auto_send_outstanding_balance_report(self, limit=100):
     _logger.info('---------- function: _auto_send_outstanding_balance_report ----------')
