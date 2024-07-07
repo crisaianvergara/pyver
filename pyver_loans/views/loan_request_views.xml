@@ -58,16 +58,16 @@
                         <group>
                             <field name="loan_amount" />
                             <field name="loan_type_id" />
-                            <field name="interest_rate" />
-                            <field name="amount_due" />
+                            <field name="interest_rate" invisible="payment_structure in ['interest_free_loan']" />
+                            <field name="amount_due" invisible="payment_structure in ['interest_free_loan']" />
                             <field name="payment_structure" />
+                            <field name="fully_paid_date" readonly="state != 'fully_paid'" />
                         </group>
                         <group>
                             <field name="applied_date" readonly="1" />
                             <field name="approved_date" readonly="1" />
                             <field name="date_of_next_invoice" invisible="payment_structure in ['interest_free_loan']" />
                             <field name="borrowed_date" />
-                            <field name="fully_paid_date" readonly="state != 'fully_paid'" />
                         </group>
                     </group>
                     <notebook>
