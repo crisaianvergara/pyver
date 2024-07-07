@@ -18,8 +18,10 @@
               <h4 class="text-uppercase">Loan Details</h4>
               <p class="fw-bold pb-2 mb-0">Amount: <span t-field="o.loan_amount" t-options='{"widget": "float", "precision": 2}' /></p>
               <p class="fw-bold pb-2 mb-0">Type: <span t-field="o.loan_type_id" /></p>
-              <p class="fw-bold pb-2 mb-0">Interest Rate (%): <span t-field="o.interest_rate" t-options='{"widget": "float", "precision": 2}' /></p>
-              <p class="fw-bold pb-2 mb-0">Monthly Due: <span t-field="o.amount_due" t-options='{"widget": "float", "precision": 2}' /></p>
+              <t t-if="o.payment_structure != 'interest_free_loan'">
+                <p class="fw-bold pb-2 mb-0">Interest Rate (%): <span t-field="o.interest_rate" t-options='{"widget": "float", "precision": 2}' /></p>
+                <p class="fw-bold pb-2 mb-0">Monthly Due: <span t-field="o.amount_due" t-options='{"widget": "float", "precision": 2}' /></p>
+              </t>
               <p class="fw-bold pb-2">Payment Structure: <span t-field="o.payment_structure" /></p>
               <t t-if="o.borrower_invoice_ids">
               <h4 class="text-uppercase">Outstanding Invoices</h4>
